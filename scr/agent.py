@@ -69,6 +69,7 @@ async def create_agent_f():
         model=llm,
         tools=tools,
         checkpointer=checkpointer,
+        system_prompt="You are a helpful assistant. You must answer the user's requests using the information found using the search tool. You can only search in the topics that the user has provided to you."
     )
     
     logger.info("Agent successfully created")
