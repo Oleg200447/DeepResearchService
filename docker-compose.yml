@@ -1,0 +1,13 @@
+services:
+  search_service:
+    build: .
+    container_name: deep_research_agent
+    networks:
+      - test_network
+    ports:
+      - "8030:8030"
+    restart: unless-stopped
+
+networks:
+  test_network:
+    external: true
