@@ -14,6 +14,7 @@ class JWTData(BaseModel):
 class ChatRequest(BaseModel):
     """Chat request from client."""
     question: str = Field(..., min_length=1, description="User question or command")
+    topics: list[str] = Field(default=[], description="List of topic IDs to search in")
 
 
 class ChatResponse(BaseModel):

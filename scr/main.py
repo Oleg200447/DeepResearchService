@@ -98,13 +98,14 @@ async def chat(
     """
     request_id = str(uuid.uuid4())
     user_id = jwt_data.sub
-    
+    logger.info(f"{request.topics}")
     log_with_context(
         logger,
         "info",
         f"Processing chat request",
         user_id=user_id,
         request_id=request_id,
+        topics = request.topics[0],
         question=request.question[:100]  # Log first 100 chars
     )
     
@@ -127,8 +128,9 @@ async def chat(
             request_id=request_id
         )
         
-        # Create user message
-        user_message = HumanMessage(content=request.question)
+        # Create user message with topics
+        topics_str = f"Indices: {', '.join(request.topics)}. " if request.topics else ""
+        user_message = HumanMessage(content=f"{topics_str}{request.question}")
         
         # Stream agent response
         response_content = ""

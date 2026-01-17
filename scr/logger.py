@@ -59,7 +59,7 @@ def setup_logger(name: str, level: str = "INFO") -> logging.Logger:
     return logger
 
 
-def log_with_context(logger: logging.Logger, level: str, message: str, **context: Any) -> None:
+def log_with_context(logger: logging.Logger, level: str, message: str, exc_info: bool = False, **context: Any) -> None:
     """Log message with additional context.
     
     Args:
@@ -68,5 +68,8 @@ def log_with_context(logger: logging.Logger, level: str, message: str, **context
         message: Log message
         **context: Additional context fields (user_id, request_id, etc.)
     """
+    context.pop("exc_info", None)
     extra = {k: v for k, v in context.items() if v is not None}
-    getattr(logger, level.lower())(message, extra=extra)
+
+    getattr(logger, level.lower())(message, extra=extra, exc_info=exc_info)
+
