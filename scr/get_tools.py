@@ -2,7 +2,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 
 
 async def get_all_tools():
-    """Получение всех инструментов: MCP + управление сессией."""
+    """Recieving all tools"""
     try:
         mcp_client = MultiServerMCPClient({
             "search_tools": {
@@ -11,7 +11,7 @@ async def get_all_tools():
             }
         })
         mcp_tools = await mcp_client.get_tools()
-        print(f"Подключено {len(mcp_tools)} инструментов filesystem")
+        print(f"Get {len(mcp_tools)} instruments")
         return mcp_tools
     except Exception as e:
-        print(f"MCP недоступен, используем базовые инструменты")
+        print(f"No MCP")

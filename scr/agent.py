@@ -63,16 +63,19 @@ async def create_agent_f():
     # Create checkpointer for session persistence
     checkpointer = InMemorySaver()
     logger.info("Initialized InMemorySaver for session persistence")
-    
+
+
+    system_prompt =    ''' 
+                           You are a helpful assistant. You must answer the user's requests using the information found using the search tool.
+                           You can only search in the indices that the user has provided to you. If you dont find any info for the your request,
+                           you can try to reformulate(maybe exchange it for synonyms, or rich it by object properties, that user try to find) it and try again.
+                       '''
     # Create agent with checkpointer
     agent = create_agent(
         model=llm,
         tools=tools,
         checkpointer=checkpointer,
-        system_prompt='''You are a helpful assistant. You must answer the user's requests using the information found using the search tool.
-                         You can only search in the indices that the user has provided to you. If you dont find any info for the your request,
-                         you can try to reformulate(maybe exchange it for synonyms, or rich it by object properties, that user try to find) it and try again.
-        '''
+        system_prompt=system_prompt
     )
     
     logger.info("Agent successfully created")
