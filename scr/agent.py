@@ -4,7 +4,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
-from scr.get_tools import get_all_tools
+from scr.get_tools import get_all_tools, get_query_refine_instructions
 from scr.config import settings
 from scr.logger import setup_logger
 
@@ -64,12 +64,23 @@ async def create_agent_f():
     checkpointer = InMemorySaver()
     logger.info("Initialized InMemorySaver for session persistence")
 
+    # Fetch query refinement instructions from the MCP server prompt
+    logger.info("Fetching query refinement instructions from MCP server")
+    refine_instructions = await get_query_refine_instructions()
+    if refine_instructions:
+        logger.info("Query refinement instructions loaded successfully")
+    else:
+        logger.warning("Query refinement instructions not available, proceeding without them")
 
-    system_prompt =    ''' 
-                           You are a helpful assistant. You must answer the user's requests using the information found using the search tool.
-                           You can only search in the indices that the user has provided to you. If you dont find any info for the your request,
-                           you can try to reformulate(maybe exchange it for synonyms, or rich it by object properties, that user try to find) it and try again.
-                       '''
+    system_prompt = (
+        "You are a helpful assistant. You must answer the user's requests using the information found using the search tool. "
+        "You can only search in the indices that the user has provided to you. If you dont find any info for the your request, "
+        "you can try to reformulate(maybe exchange it for synonyms, or rich it by object properties, that user try to find) it and try again."
+    )
+
+    if refine_instructions:
+        system_prompt += f"\n\n## Query Refinement Instructions\n{refine_instructions}"
+
     # Create agent with checkpointer
     agent = create_agent(
         model=llm,
