@@ -5,6 +5,7 @@ from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from scr.get_tools import get_all_tools, get_query_refine_instructions
+from scr.middleware import extract_facts_middleware
 from scr.config import settings
 from scr.logger import setup_logger
 
@@ -81,12 +82,13 @@ async def create_agent_f():
     if refine_instructions:
         system_prompt += f"\n\n## Query Refinement Instructions\n{refine_instructions}"
 
-    # Create agent with checkpointer
+    # Create agent with checkpointer and fact-extraction middleware
     agent = create_agent(
         model=llm,
         tools=tools,
         checkpointer=checkpointer,
-        system_prompt=system_prompt
+        system_prompt=system_prompt,
+        middleware=[extract_facts_middleware],
     )
     
     logger.info("Agent successfully created")

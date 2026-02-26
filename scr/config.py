@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     use_openrouter: bool = False
     llm_model: str = "gpt-4"
     llm_temperature: float = 0.7
+    extractor_model: str = "gpt-4"
     
     # MCP Server Configuration
     mcp_search_server_url: str = "http://mcp_search_server:5005"
